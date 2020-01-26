@@ -33,6 +33,7 @@ class NativeCookie implements CookieInterface
         'path'      => '/',
         'secure'    => false,
         'http_only' => false,
+        'samesite'  => 'Lax',
     ];
 
     /**
@@ -113,19 +114,24 @@ class NativeCookie implements CookieInterface
      * @param string $domain
      * @param bool   $secure
      * @param bool   $httpOnly
+     * @param string $sameSite
      *
      * @return void
      */
-    protected function setCookie($value, int $lifetime, string $path = null, string $domain = null, bool $secure = null, bool $httpOnly = null)
+    protected function setCookie($value, int $lifetime, string $path = null, string $domain = null, bool $secure = null, bool $httpOnly = null, string $sameSite = null)
     {
+        $options = [
+            'expires' => $lifetime,
+            'path' => $path ?: $this->options['path'],
+            'domain' => $domain ?: $this->options['domain'],
+            'secure' => $secure ?: $this->options['secure'],
+            'httponly' =>$httpOnly ?: $this->options['http_only'],
+            'samesite' => $sameSite ?: $this->options['samesite'],
+        ];
         setcookie(
             $this->options['name'],
             json_encode($value),
-            $lifetime,
-            $path ?: $this->options['path'],
-            $domain ?: $this->options['domain'],
-            $secure ?: $this->options['secure'],
-            $httpOnly ?: $this->options['http_only']
+            $options
         );
     }
 }
